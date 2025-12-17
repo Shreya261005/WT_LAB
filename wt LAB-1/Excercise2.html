@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Us</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 50px;
+            background-color: #f4f4f9;
+        }
+        form {
+            background: rgb(245, 255, 255);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(32, 97, 72, 0.1);
+            width: 350px;
+        }
+        div {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d81515;
+            border-radius: 4px;
+            box-sizing: border-box; /* Ensures padding doesn't affect width */
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        button {
+            background-color: #581f86;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #10c42e;
+        }
+    </style>
+</head>
+<body>
+
+    <form action="#" method="post">
+        <h2>Contact Us</h2>
+
+        <div>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="user_name" placeholder="Your Full Name" required>
+        </div>
+
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="user_email" placeholder="name@gmail.com" required>
+        </div>
+
+        <div>
+            <label for="message">Message:</label>
+            <textarea id="message" name="user_message" placeholder="we will try our best to help you."></textarea>
+        </div>
+
+        <button type="submit">Send Message</button>
+    </form>
+
+</body>
+</html>

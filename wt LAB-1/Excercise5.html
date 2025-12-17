@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Personal Portfolio</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f4f7f6;
+        }
+
+        /* Header Styling */
+        header {
+            background-color: #2c3e50;
+            color: #ffffff;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+        }
+
+        header p {
+            font-style: italic;
+            font-weight: 300;
+        }
+
+        /* Container for spacing */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            border-radius: 8px;
+        }
+
+        /* Section Spacing */
+        section {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        section:last-child {
+            border-bottom: none;
+        }
+
+        h2 {
+            color: #2980b9;
+            border-left: 5px solid #2980b9;
+            padding-left: 10px;
+        }
+
+        /* Skills List Styling */
+        ul {
+            list-style-type: square;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        /* Project Styling */
+        .project {
+            background: #f9f9f9;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        /* Footer Styling */
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+
+        footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Venkata Sai Shreya Maturi</h1>
+        <p>B-tech 3rd year | Aspiring AI/ML Engineer | VIT-AP </p>
+    </header>
+
+    <div class="container">
+        <section id="about">
+            <h2>About Me</h2>
+            <p>
+                Hello! I am pursuing my b-tech in VIT-AP University. I am a passionate developer and 
+                aspiring AI/ML Engineer. I am passionate about Technology and Innovation 
+                and exploring the future of Smart Tech.
+            </p>
+        </section>
+
+        <section id="skills">
+            <h2>Skills</h2>
+            <ul>
+                <li>Data analysis (Numpy/Pandas)</li>
+                <li>Python</li>
+                <li>HTML,CSS</li>
+                <li>Java</li>
+                <li>Supervised Learning Models</li>
+            </ul>
+        </section>
+
+        <section id="projects">
+            <h2>Projects</h2>
+            <div class="project">
+                <h3>Project 1: Document Forgery Detection System</h3>
+                <p>Designed using Machine Learning and Python- a powerful and practical project tackling real
+                    world fraud using data science. It used Random Forest Classifier to check imbalance with SMOTE.</p>
+            </div>
+            <div class="project">
+                <h3>Project 2: Multilingual Language Translator</h3>
+                <p>The project combines the capabilities of Hugging Face Transformers,gTTs,and ipywidgets to translate text 
+                    across multiple languages and speak the translated output in real time.</p>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>Contact me at: <a href="mailto:yourname@example.com">shreyamaturi26@gmail.com</a></p>
+        <p>&copy; 2025 Venkata Sai Shreya Maturi. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
