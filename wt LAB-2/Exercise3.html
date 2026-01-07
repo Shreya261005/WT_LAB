@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Professional Task Board</title>
+    <style>
+        :root {
+            --accent: #b3893b;
+            --column-bg: rgba(214, 106, 106, 0.05);
+            --card-bg: #8ca2cc;
+        }
+
+        body { 
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            color: #8d4b7d;
+            /* Modern Mesh Gradient Background */
+            background-color: #1a202c;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(210, 40%, 15%, 1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(220, 30%, 20%, 1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(190, 40%, 15%, 1) 0, transparent 50%);
+        }
+
+        .header-bar {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .input-group {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-radius: 15px;
+            display: inline-flex;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        input {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            outline: none;
+            width: 300px;
+        }
+
+        button {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0, 210, 255, 0.4); }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .column {
+            background: var(--column-bg);
+            border-radius: 20px;
+            padding: 20px;
+            min-height: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .column h3 {
+            font-size: 1rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
+            margin-top: 0;
+        }
+
+        .task-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            cursor: move;
+            border: 1px solid #2d3748;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+        }
+
+        .task-card strong { display: block; font-size: 1.1rem; margin-bottom: 5px; }
+        .task-card small { color: #718096; }
+
+        /* Specific Requirement: Drop in Completed changes background */
+        .completed-state {
+            background: #064e3b !important;
+            border-color: #10b981 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-bar">
+        <h1>TaskFlow</h1>
+        <div class="input-group">
+            <input type="text" id="taskName" placeholder="Enter new task...">
+            <button onclick="addTask()">Add Task</button>
+        </div>
+    </div>
+
+    <div class="board">
+        <div class="column" id="todo" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h3>To Do</h3>
+        </div>
+        <div class="column" id="inprogress" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h3>In Progress</h3>
+        </div>
+        <div class="column" id="completed" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h3>Completed</h3>
+        </div>
+    </div>
+
+    <script>
+        function allowDrop(ev) { ev.preventDefault(); }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("taskId", ev.target.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const id = ev.dataTransfer.getData("taskId");
+            const task = document.getElementById(id);
+            const target = ev.target.closest('.column');
+            
+            if (target) {
+                target.appendChild(task);
+                if (target.id === 'completed') {
+                    task.classList.add('completed-state');
+                    alert("Task Completed Successfully");
+                } else {
+                    task.classList.remove('completed-state');
+                }
+            }
+        }
+
+        function addTask() {
+            const input = document.getElementById('taskName');
+            if (!input.value) return;
+
+            const id = "t-" + Date.now();
+            const date = new Date().toLocaleDateString();
+
+            const card = document.createElement('div');
+            card.className = "task-card";
+            card.id = id;
+            card.draggable = true;
+            card.ondragstart = drag;
+            card.innerHTML = `<strong>${input.value}</strong><small>${date}</small>`;
+
+            document.getElementById('todo').appendChild(card);
+            input.value = "";
+        }
+    </script>
+</body>
+</html>

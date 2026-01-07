@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Modern Dark HTML5 Canvas</title>
+    <style>
+        /* Deep Midnight Gradient Background (Not pure black) */
+        body { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            background: radial-gradient(circle, #2c3e50 0%, #000000 100%);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        canvas { 
+            /* Subtle dark grey with a thin border to define the shape */
+            background-color: #1e272e; 
+            border: 1px solid #34495e;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="modernCanvas" width="500" height="300"></canvas>
+
+    <script>
+        const canvas = document.getElementById("modernCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // 1. Filled Rectangle (Vibrant Blue/Purple Gradient)
+        const rectGrad = ctx.createLinearGradient(60, 50, 220, 140);
+        rectGrad.addColorStop(0, "#00d2ff");
+        rectGrad.addColorStop(1, "#3a7bd5");
+        ctx.fillStyle = rectGrad;
+        ctx.fillRect(60, 50, 160, 90);
+
+        // 2. Single Filled Circle (Soft Sunset Orange)
+        ctx.beginPath();
+        ctx.arc(380, 95, 45, 0, Math.PI * 2);
+        ctx.fillStyle = "#ff9f43";
+        ctx.fill();
+
+        // 3. Straight Line (Metallic Silver)
+        ctx.beginPath();
+        ctx.moveTo(60, 190);
+        ctx.lineTo(440, 190);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#576574"; 
+        ctx.stroke();
+
+        // 4. Text (Clean White with subtle spacing)
+        ctx.font = "600 32px 'Segoe UI', Arial";
+        ctx.fillStyle = "#f5f6fa";
+        ctx.textAlign = "center";
+        ctx.fillText("HTML5 Canvas", canvas.width / 2, 260);
+    </script>
+</body>
+</html>

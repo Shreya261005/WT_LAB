@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Data System</title>
+    <style>
+        :root {
+            --accent: #ac7551; /* Your brown accent */
+            --danger: #b5a900; /* Your gold-yellow danger color */
+            --card-bg: #ffffff;
+            --input-bg: #fdfdfd;
+            --text-dark: #333333;
+            --text-muted: #666666;
+        }
+
+        body { 
+            margin: 0; padding: 40px; min-height: 100vh;
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            color: var(--text-dark);
+            /* Very light off-white background */
+            background-color: #f9fafb;
+            background-image: radial-gradient(at 50% 50%, #f9fafb 0%, #f0f2f5 100%);
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        header { text-align: center; margin-bottom: 50px; }
+        /* Changed "User Registry" to "User Data" */
+        header h1 { font-size: 2.4rem; font-weight: 700; margin-bottom: 5px; color: #111; }
+        header p { color: var(--text-muted); font-size: 1rem; }
+
+        .main-layout { display: grid; grid-template-columns: 350px 1fr; gap: 40px; }
+
+        /* Form Card */
+        .form-card {
+            background: var(--card-bg); padding: 30px; border-radius: 12px;
+            border: 1px solid #e1e4e8;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            height: fit-content;
+        }
+
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+        input {
+            width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #d1d5db;
+            background: var(--input-bg); color: #222; box-sizing: border-box;
+            transition: 0.2s;
+        }
+        input:focus { outline: none; border-color: var(--accent); ring: 2px solid var(--accent); }
+
+        button {
+            width: 100%; padding: 12px; border-radius: 6px; border: none;
+            font-weight: 700; cursor: pointer; transition: 0.2s;
+        }
+        .btn-submit { background: var(--accent); color: #fff; }
+        .btn-clear { background: transparent; border: 2px solid var(--danger); color: var(--danger); margin-top: 15px; }
+        button:hover { opacity: 0.85; transform: translateY(-1px); }
+
+        /* Table Card */
+        .table-card {
+            background: var(--card-bg); padding: 0; border-radius: 12px;
+            border: 1px solid #e1e4e8; overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { 
+            text-align: left; padding: 18px; background: #fcfcfc;
+            border-bottom: 2px solid #f0f0f0; color: var(--accent); 
+            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;
+        }
+        td { padding: 18px; border-bottom: 1px solid #f0f0f0; font-size: 0.95rem; }
+
+        .btn-delete {
+            background: #fff5f5; color: #e53e3e;
+            padding: 6px 14px; border: 1px solid #feb2b2; border-radius: 4px; font-size: 0.75rem;
+        }
+        .btn-delete:hover { background: #feb2b2; color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>User <span style="color: var(--accent);">Data</span></h1>
+            <p>Manage and monitor all active user records</p>
+        </header>
+
+        <div class="main-layout">
+            <div class="form-card">
+                <form id="regForm">
+                    <div class="form-group">
+                        <label>FULL NAME</label>
+                        <input type="text" id="name" required placeholder="Type name here">
+                    </div>
+                    <div class="form-group">
+                        <label>EMAIL ADDRESS</label>
+                        <input type="email" id="email" required placeholder="email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>MOBILE NUMBER</label>
+                        <input type="text" id="mobile" required placeholder="10 Digits">
+                    </div>
+                    <div class="form-group">
+                        <label>SECURE PASSWORD</label>
+                        <input type="password" id="password" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn-submit">Add to Data</button>
+                </form>
+                <button class="btn-clear" onclick="clearAll()">Reset Database</button>
+            </div>
+
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User Name</th>
+                            <th>Email Address</th>
+                            <th>Mobile</th>
+                            <th>Manage</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('regForm');
+
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            const userData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                mobile: document.getElementById('mobile').value,
+                password: document.getElementById('password').value
+            };
+
+            if (userData.mobile.length !== 10 || isNaN(userData.mobile)) {
+                return alert("Mobile number must be exactly 10 digits.");
+            }
+
+            let users = JSON.parse(localStorage.getItem('users') || "[]");
+            if (users.some(u => u.email === userData.email)) {
+                return alert("This email already exists in the data.");
+            }
+
+            users.push(userData);
+            localStorage.setItem('users', JSON.stringify(users));
+            form.reset();
+            displayUsers();
+        };
+
+        function displayUsers() {
+            const users = JSON.parse(localStorage.getItem('users') || "[]");
+            const tbody = document.getElementById('userTable');
+            if(users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 40px; color:#999;">The data list is currently empty.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = users.map((u, index) => `
+                <tr>
+                    <td><strong>${u.name}</strong></td>
+                    <td>${u.email}</td>
+                    <td>${u.mobile}</td>
+                    <td><button class="btn-delete" onclick="deleteUser(${index})">Delete</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteUser(index) {
+            let users = JSON.parse(localStorage.getItem('users'));
+            users.splice(index, 1);
+            localStorage.setItem('users', JSON.stringify(users));
+            displayUsers();
+        }
+
+        function clearAll() {
+            if(confirm("This will permanently delete all User Data. Proceed?")) {
+                localStorage.removeItem('users');
+                displayUsers();
+            }
+        }
+        displayUsers();
+    </script>
+</body>
+</html>

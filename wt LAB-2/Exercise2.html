@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ultimate Media Hub</title>
+    <style>
+        /* Midnight Dark Aesthetic */
+        body { 
+            background: #0f172a;
+            color: #f5f6fa;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 700px;
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 1px solid #334155;
+        }
+
+        h1 { text-align: center; color: #38bdf8; margin-bottom: 25px; }
+        
+        .media-card {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 1px solid #1e293b;
+        }
+
+        video, audio { width: 100%; border-radius: 8px; }
+
+        .time-box {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .badge {
+            background: #38bdf8;
+            color: #0f172a;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Multimedia Dashboard</h1>
+
+        <div class="media-card">
+            <audio id="myAudio" controls>
+                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+            </audio>
+            <div class="time-box">
+                <span style="color: #94a3b8;">AUDIO</span>
+                <span id="audioTime" class="badge">0:00</span>
+            </div>
+        </div>
+
+        <div class="media-card">
+            <video id="myVideo" controls poster="https://images.pexels.com/photos/326055/pexels-photo-326055.jpeg">
+                <source src="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4" type="video/mp4">
+                Your browser is blocking this video.
+            </video>
+            <div class="time-box">
+                <span style="color: #94a3b8;">VIDEO (BIRDS THEME)</span>
+                <span id="videoTime" class="badge">0:00</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        const audio = document.getElementById('myAudio');
+        const video = document.getElementById('myVideo');
+
+        audio.ontimeupdate = () => {
+            document.getElementById('audioTime').innerText = formatTime(audio.currentTime);
+        };
+
+        video.ontimeupdate = () => {
+            document.getElementById('videoTime').innerText = formatTime(video.currentTime);
+        };
+    </script>
+</body>
+</html>
