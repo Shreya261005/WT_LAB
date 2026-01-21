@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Stage Workflow Engine</title>
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --success: #00f2fe;
+            --error: #ff4b2b;
+            /* Updated Background Colors */
+            --bg-gradient: linear-gradient(135deg, #1e272e 0%, #0f1418 100%);
+            --card-bg: #2d3436;
+            --text-main: #f1f2f6;
+            --input-bg: #3d4446;
+        }
+
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: var(--bg-gradient); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            color: var(--text-main);
+        }
+        
+        .form-container { 
+            background: var(--card-bg); 
+            width: 450px; 
+            padding: 30px; 
+            border-radius: 16px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Progress Bar */
+        .progress-wrapper { margin-bottom: 30px; }
+        .progress-bar { height: 6px; background: #444; border-radius: 10px; overflow: hidden; }
+        #progress-fill { height: 100%; background: linear-gradient(to right, var(--primary), var(--secondary)); width: 25%; transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .steps-label { display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.75rem; color: #a4b0be; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Stages */
+        .stage { display: none; }
+        .stage.active { display: block; animation: slideUp 0.4s ease; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2 { margin-top: 0; color: var(--primary); font-weight: 300; letter-spacing: 1px; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: #ced6e0; }
+        
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            background: var(--input-bg);
+            border: 1px solid #444; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            color: white;
+            transition: all 0.3s; 
+        }
+        input:focus { border-color: var(--primary); outline: none; background: #454d4f; box-shadow: 0 0 8px rgba(0, 210, 255, 0.3); }
+        input.invalid { border-color: var(--error); }
+
+        .error-msg { color: var(--error); font-size: 0.7rem; margin-top: 5px; height: 14px; }
+
+        /* Navigation */
+        .controls { display: flex; justify-content: space-between; margin-top: 30px; }
+        button { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s; }
+        .btn-next { background: var(--primary); color: #000; }
+        .btn-prev { background: transparent; color: #a4b0be; border: 1px solid #444; }
+        .btn-prev:hover { background: #3d4446; color: white; }
+        .btn-submit { background: var(--success); color: #000; box-shadow: 0 0 15px rgba(0, 242, 254, 0.4); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* Success Screen */
+        #success-screen { display: none; text-align: center; padding: 30px 10px; }
+        #success-screen h2 { color: var(--success); font-size: 2rem; }
+        .checkmark { font-size: 60px; color: var(--success); margin-bottom: 15px; }
+        #summary { background: rgba(0,0,0,0.2); border: 1px solid #444; color: #ced6e0; }
+    </style>
+</head>
+<body>
+
+<div class="form-container" id="main-card">
+    <div id="ui-header">
+        <div class="progress-wrapper">
+            <div class="progress-bar"><div id="progress-fill"></div></div>
+            <div class="steps-label">
+                <span>Identity</span>
+                <span>Contact</span>
+                <span>Security</span>
+                <span>Confirm</span>
+            </div>
+        </div>
+    </div>
+
+    <form id="workflowForm" novalidate>
+        <div class="stage active" id="stage1">
+            <h2>Personal Info</h2>
+            <div class="input-group">
+                <label>First Name</label>
+                <input type="text" id="fname" placeholder="John" required>
+                <div class="error-msg" id="err-fname"></div>
+            </div>
+            <div class="input-group">
+                <label>Last Name</label>
+                <input type="text" id="lname" placeholder="Doe" required>
+                <div class="error-msg" id="err-lname"></div>
+            </div>
+        </div>
+
+        <div class="stage" id="stage2">
+            <h2>Contact Details</h2>
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" id="email" placeholder="john@example.com" required>
+                <div class="error-msg" id="err-email"></div>
+            </div>
+        </div>
+
+        <div class="stage" id="stage3">
+            <h2>Security</h2>
+            <div class="input-group">
+                <label>Password (min 6 chars)</label>
+                <input type="password" id="pass" required>
+                <div class="error-msg" id="err-pass"></div>
+            </div>
+        </div>
+
+        <div class="stage" id="stage4">
+            <h2>Confirm & Submit</h2>
+            <p style="color: #a4b0be;">Please review your details:</p>
+            <div id="summary" style="padding: 15px; border-radius: 8px; font-size: 0.9rem; line-height: 1.6;"></div>
+        </div>
+
+        <div class="controls" id="ui-footer">
+            <button type="button" class="btn-prev" id="prevBtn" disabled onclick="changeStage(-1)">Back</button>
+            <button type="button" class="btn-next" id="nextBtn" onclick="changeStage(1)">Continue</button>
+        </div>
+    </form>
+
+    <div id="success-screen">
+        <div class="checkmark">✓</div>
+        <h2>Success!</h2>
+        <p style="color: #a4b0be; margin-bottom: 30px;">Your registration has been submitted.</p>
+        <button class="btn-next" onclick="location.reload()">Return Home</button>
+    </div>
+</div>
+
+<script>
+    let formData = {};
+    let currentStage = 1;
+    const totalStages = 4;
+
+    function changeStage(delta) {
+        if (delta === 1 && !validateStage()) return;
+
+        currentStage += delta;
+
+        if (currentStage > totalStages) {
+            showFinalSubmission();
+            return;
+        }
+
+        updateUI();
+    }
+
+    function showFinalSubmission() {
+        document.getElementById('workflowForm').style.display = 'none';
+        document.getElementById('ui-header').style.display = 'none';
+        document.getElementById('success-screen').style.display = 'block';
+    }
+
+    function updateUI() {
+        document.querySelectorAll('.stage').forEach((s, i) => {
+            s.classList.toggle('active', i === currentStage - 1);
+        });
+
+        const progress = (currentStage / totalStages) * 100;
+        document.getElementById('progress-fill').style.width = progress + "%";
+
+        document.getElementById('prevBtn').disabled = (currentStage === 1);
+        const nextBtn = document.getElementById('nextBtn');
+        
+        if (currentStage === totalStages) {
+            nextBtn.innerText = "Submit Form";
+            nextBtn.className = "btn-submit";
+            showSummary();
+        } else {
+            nextBtn.innerText = "Continue";
+            nextBtn.className = "btn-next";
+        }
+    }
+
+    function validateStage() {
+        let isValid = true;
+        clearErrors();
+
+        if (currentStage === 1) {
+            const fn = document.getElementById('fname');
+            const ln = document.getElementById('lname');
+            if (fn.value.length < 2) { setError(fn, "err-fname", "Name too short"); isValid = false; }
+            if (ln.value.length < 2) { setError(ln, "err-lname", "Name too short"); isValid = false; }
+            if (isValid) { formData.firstName = fn.value; formData.lastName = ln.value; }
+        } 
+        else if (currentStage === 2) {
+            const email = document.getElementById('email');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) { setError(email, "err-email", "Invalid email format"); isValid = false; }
+            if (isValid) formData.email = email.value;
+        } 
+        else if (currentStage === 3) {
+            const pass = document.getElementById('pass');
+            if (pass.value.length < 6) { setError(pass, "err-pass", "Min. 6 characters required"); isValid = false; }
+            if (isValid) formData.password = pass.value;
+        }
+
+        return isValid;
+    }
+
+    function setError(el, errId, msg) {
+        el.classList.add('invalid');
+        document.getElementById(errId).innerText = msg;
+    }
+
+    function clearErrors() {
+        document.querySelectorAll('input').forEach(i => i.classList.remove('invalid'));
+        document.querySelectorAll('.error-msg').forEach(m => m.innerText = "");
+    }
+
+    function showSummary() {
+        document.getElementById('summary').innerHTML = `
+            <span style="color:var(--primary)">FULL NAME:</span> ${formData.firstName} ${formData.lastName}<br>
+            <span style="color:var(--primary)">EMAIL:</span> ${formData.email}<br>
+            <span style="color:var(--primary)">SECURITY:</span> Password Protected
+        `;
+    }
+</script>
+
+</body>
+</html>

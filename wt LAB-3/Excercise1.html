@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive Registration System</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background: #f4f4f9; }
+        .container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 400px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9em; }
+        input, select { width: 100%; padding: 8px; border: 2px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .feedback { font-size: 0.75em; margin-top: 4px; color: #666; }
+        .invalid { border-color: #ff4d4d !important; }
+        .valid { border-color: #2ecc71 !important; }
+        button { width: 100%; padding: 10px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; }
+        button:disabled { background: #bdc3c7; cursor: not-allowed; }
+        #formError { color: #e74c3c; font-size: 0.85em; margin-top: 10px; text-align: center; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>User Registration</h2>
+    <form id="registrationForm" novalidate>
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="name" placeholder="John Doe" required>
+        </div>
+
+        <div class="form-group">
+            <label>Email (must be .com)</label>
+            <input type="email" id="email" placeholder="email@example.com" required>
+        </div>
+
+        <div class="form-group">
+            <label>Role</label>
+            <select id="role">
+                <option value="Student">Student</option>
+                <option value="Teacher">Teacher</option>
+                <option value="Admin">Admin</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="skillsContainer">
+            <label>Skills</label>
+            <input type="text" id="skills" placeholder="e.g. JavaScript, Python">
+        </div>
+
+        <div class="form-group">
+            <label id="ageLabel">Age</label>
+            <input type="number" id="age" required>
+            <div id="ageFeedback" class="feedback"></div>
+        </div>
+
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password" required>
+            <div id="passFeedback" class="feedback"></div>
+        </div>
+
+        <div class="form-group">
+            <label>Confirm Password</label>
+            <input type="password" id="confirmPassword" required>
+        </div>
+
+        <button type="submit" id="submitBtn">Create Account</button>
+        <p id="formError">Please correct the highlighted errors above.</p>
+    </form>
+</div>
+
+
+
+<script>
+    const form = document.getElementById('registrationForm');
+    const roleSelect = document.getElementById('role');
+    const skillsContainer = document.getElementById('skillsContainer');
+    
+    // Dynamic Rules Configuration
+    const roleRules = {
+        Student: { 
+            minAge: 16, 
+            passRegex: /.{6,}/, 
+            passDesc: "At least 6 characters" 
+        },
+        Teacher: { 
+            minAge: 21, 
+            passRegex: /.{8,}/, 
+            passDesc: "At least 8 characters" 
+        },
+        Admin: { 
+            minAge: 25, 
+            passRegex: /^(?=.*[A-Z])(?=.*[0-9]).{10,}$/, 
+            passDesc: "Min 10 chars, 1 Uppercase, 1 Number" 
+        }
+    };
+
+    // Helper: Dynamic Feedback & Highlighting
+    function setValidity(elementId, isValid) {
+        const el = document.getElementById(elementId);
+        if (isValid) {
+            el.classList.add('valid');
+            el.classList.remove('invalid');
+        } else {
+            el.classList.add('invalid');
+            el.classList.remove('valid');
+        }
+        return isValid;
+    }
+
+    function validate() {
+        const role = roleSelect.value;
+        const currentRules = roleRules[role];
+        
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const age = parseInt(document.getElementById('age').value);
+        const pass = document.getElementById('password').value;
+        const confPass = document.getElementById('confirmPassword').value;
+
+        // 1. Role-specific UI changes
+        skillsContainer.style.display = (role === 'Admin') ? 'none' : 'block';
+        document.getElementById('ageFeedback').innerText = `Required age for ${role}: ${currentRules.minAge}+`;
+        document.getElementById('passFeedback').innerText = currentRules.passDesc;
+
+        // 2. Validation Logic
+        const isNameValid = setValidity('name', name.trim().length > 2);
+        
+        const isEmailValid = setValidity('email', 
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.toLowerCase().endsWith('.com')
+        );
+
+        const isAgeValid = setValidity('age', age >= currentRules.minAge);
+        
+        const isPassValid = setValidity('password', currentRules.passRegex.test(pass));
+        
+        const isConfValid = setValidity('confirmPassword', (pass === confPass && confPass !== ""));
+
+        // Return overall form status
+        return isNameValid && isEmailValid && isAgeValid && isPassValid && isConfValid;
+    }
+
+    // Event Listeners for Real-time validation
+    form.addEventListener('input', () => {
+        validate();
+        document.getElementById('formError').style.display = 'none';
+    });
+
+    roleSelect.addEventListener('change', validate);
+
+    // Prevent Submission
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (validate()) {
+            alert("✅ Form submitted successfully for " + roleSelect.value + " role!");
+            form.reset();
+            // Clear styles after reset
+            const inputs = form.querySelectorAll('input');
+            inputs.forEach(i => i.classList.remove('valid', 'invalid'));
+        } else {
+            document.getElementById('formError').style.display = 'block';
+        }
+    });
+
+    // Run initial validation to set hints
+    validate();
+</script>
+
+</body>
+</html>

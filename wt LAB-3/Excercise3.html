@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Web Tech Course Survey</title>
+    <style>
+        :root { 
+            --glass: rgba(255, 255, 255, 0.85);
+            --accent: #0984e3;
+            --success: #00b894;
+            --text: #2d3436;
+        }
+
+        /* Unique Animated Bokeh Background */
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0f0c29;
+            background: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Floating background decorative circles */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(9, 132, 227, 0.2);
+            filter: blur(80px);
+            z-index: 0;
+            animation: float 20s infinite alternate;
+        }
+        body::after { bottom: 10%; right: 10%; background: rgba(108, 92, 231, 0.2); animation-delay: -5s; }
+        @keyframes float { from { transform: translate(0,0); } to { transform: translate(100px, 100px); } }
+
+        .survey-card { 
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 580px;
+            z-index: 1;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        h2 { color: var(--text); text-align: center; margin-bottom: 30px; letter-spacing: -0.5px; }
+
+        .q-block { 
+            background: rgba(255, 255, 255, 0.4);
+            padding: 20px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            transition: 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .q-label { font-weight: 600; color: #1e272e; margin-bottom: 15px; display: block; }
+
+        /* Custom Radio/Check Styling */
+        .options-grid { display: grid; gap: 12px; }
+        .option-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            cursor: pointer; 
+            padding: 10px;
+            border-radius: 10px;
+            transition: 0.2s;
+        }
+        .option-item:hover { background: rgba(9, 132, 227, 0.1); }
+        input[type="radio"], input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); }
+
+        input[type="text"] { 
+            width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #ddd;
+            box-sizing: border-box; outline: none; transition: 0.3s;
+        }
+        input[type="text"]:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(9, 132, 227, 0.1); }
+
+        /* Validation Feedback */
+        .invalid { border-color: #ff7675; background: rgba(255, 118, 117, 0.05); }
+        .error-hint { color: #d63031; font-size: 0.8rem; margin-top: 8px; display: none; font-weight: 500; }
+        .invalid .error-hint { display: block; }
+
+        button#btnSubmit { 
+            background: var(--accent); color: white; border: none; padding: 16px;
+            width: 100%; border-radius: 14px; font-size: 1.1rem; font-weight: bold;
+            cursor: pointer; box-shadow: 0 10px 20px rgba(9, 132, 227, 0.3); transition: 0.3s;
+        }
+        button#btnSubmit:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(9, 132, 227, 0.4); }
+
+        /* Success View */
+        .success-content { text-align: center; padding: 20px; }
+        .confetti { font-size: 50px; margin-bottom: 15px; display: block; }
+    </style>
+</head>
+<body>
+
+<div class="survey-card" id="app">
+    <div id="surveyFormView">
+        <h2>Web Tech Course Feedback</h2>
+        <form id="courseSurvey" novalidate>
+            <div id="dynamicContainer"></div>
+            <button type="submit" id="btnSubmit">Submit Feedback</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // 1. Data Structure for Web Tech Course
+    const surveyConfig = [
+        {
+            id: "studentName",
+            type: "text",
+            label: "Student Name",
+            required: true
+        },
+        {
+            id: "techInterest",
+            type: "checkbox",
+            label: "Which modules did you find most useful? (Select min 2)",
+            options: ["React Hooks", "CSS Grid/Flexbox", "Node.js API", "MongoDB", "TypeScript"],
+            minSelect: 2
+        },
+        {
+            id: "pace",
+            type: "radio",
+            label: "can the faculty clear your doubts?",
+            options: ["1", "2", "3","4","5"],
+            required: true
+        },
+        {
+            id: "instructorRating",
+            type: "radio",
+            label: "Instructor Clarity & Support",
+            options: ["Excellent", "Good", "Average", "Needs Improvement"],
+            required: true
+        }
+    ];
+
+    const container = document.getElementById('dynamicContainer');
+
+    // 2. DOM Generation
+    function buildSurvey() {
+        surveyConfig.forEach(q => {
+            const block = document.createElement('div');
+            block.className = 'q-block';
+            block.id = `qbox-${q.id}`;
+
+            let html = `<label class="q-label">${q.label}${q.required ? ' *' : ''}</label>`;
+
+            if (q.type === 'text') {
+                html += `<input type="text" id="val-${q.id}" placeholder="Enter your response...">`;
+            } else {
+                html += `<div class="options-grid">`;
+                q.options.forEach(opt => {
+                    html += `
+                        <label class="option-item">
+                            <input type="${q.type}" name="${q.id}" value="${opt}"> ${opt}
+                        </label>`;
+                });
+                html += `</div>`;
+            }
+
+            html += `<div class="error-hint" id="err-${q.id}">This field requires attention.</div>`;
+            block.innerHTML = html;
+            container.appendChild(block);
+        });
+    }
+
+    // 3. Dynamic Validation
+    function validate() {
+        let isValid = true;
+
+        surveyConfig.forEach(q => {
+            const block = document.getElementById(`qbox-${q.id}`);
+            let fieldOk = true;
+
+            if (q.type === 'text') {
+                if (q.required && !document.getElementById(`val-${q.id}`).value.trim()) fieldOk = false;
+            } else if (q.type === 'radio') {
+                if (q.required && !document.querySelector(`input[name="${q.id}"]:checked`)) fieldOk = false;
+            } else if (q.type === 'checkbox') {
+                const count = document.querySelectorAll(`input[name="${q.id}"]:checked`).length;
+                if (q.minSelect && count < q.minSelect) fieldOk = false;
+            }
+
+            if (!fieldOk) {
+                block.classList.add('invalid');
+                isValid = false;
+            } else {
+                block.classList.remove('invalid');
+            }
+        });
+
+        return isValid;
+    }
+
+    // 4. Submission & Submission View
+    document.getElementById('courseSurvey').addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (validate()) {
+            const app = document.getElementById('app');
+            app.innerHTML = `
+                <div class="success-content">
+                    <span class="confetti">🎓</span>
+                    <h3>Feedback Received!</h3>
+                    <p>Thank you for helping us improve the Web Technologies course. Your certificate will be issued shortly.</p>
+                    <button onclick="location.reload()" style="background:#2d3436; color:white; padding:12px 25px; border:none; border-radius:10px; cursor:pointer;">Close</button>
+                </div>
+            `;
+        }
+    });
+
+    buildSurvey();
+</script>
+
+</body>
+</html>
