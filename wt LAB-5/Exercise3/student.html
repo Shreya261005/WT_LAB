@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Record System (JSON)</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 30px; }
+        .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 1000px; margin: auto; }
+        h2 { color: #2d3436; margin-top: 0; }
+        
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        input { padding: 10px; border: 1px solid #dfe6e9; border-radius: 4px; }
+        
+        button { padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-add { background: #00b894; color: white; }
+        .btn-update { background: #0984e3; color: white; }
+        .btn-delete { background: #d63031; color: white; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #636e72; color: white; }
+        
+        .msg { font-size: 0.9rem; margin-bottom: 10px; height: 1.2rem; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Student Record System</h2>
+    <div id="msg" class="msg"></div>
+
+    <div class="form-row">
+        <input type="text" id="stuId" placeholder="ID (e.g. S003)">
+        <input type="text" id="stuName" placeholder="Full Name">
+        <input type="text" id="stuCourse" placeholder="Course">
+        <input type="number" id="stuMarks" placeholder="Marks">
+        <button class="btn-add" onclick="createStudent()">Add Student</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Course</th>
+                <th>Marks</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="studentTable"></tbody>
+    </table>
+</div>
+
+<script>
+    let students = []; // Global state to hold JSON objects
+
+    // READ: Fetch JSON data
+    async function fetchStudents() {
+        try {
+            const response = await fetch('students.json');
+            if (!response.ok) throw new Error("Could not fetch JSON");
+            
+            students = await response.json();
+            renderTable();
+        } catch (error) {
+            showMsg("Error loading data: " + error.message, "#d63031");
+        }
+    }
+
+    // Render logic
+    function renderTable() {
+        const tbody = document.getElementById('studentTable');
+        tbody.innerHTML = students.map(s => `
+            <tr>
+                <td>${s.id}</td>
+                <td>${s.name}</td>
+                <td><input type="text" value="${s.course}" id="edit-course-${s.id}"></td>
+                <td><input type="number" value="${s.marks}" id="edit-marks-${s.id}"></td>
+                <td>
+                    <button class="btn-update" onclick="updateStudent('${s.id}')">Update</button>
+                    <button class="btn-delete" onclick="deleteStudent('${s.id}')">Delete</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    // CREATE: Add student
+    function createStudent() {
+        const id = document.getElementById('stuId').value.trim();
+        const name = document.getElementById('stuName').value.trim();
+        const course = document.getElementById('stuCourse').value.trim();
+        const marks = document.getElementById('stuMarks').value.trim();
+
+        // Validation
+        if (!id || !name || !course || !marks) {
+            showMsg("Validation Error: Please fill all fields.", "#d63031");
+            return;
+        }
+
+        if (students.find(s => s.id === id)) {
+            showMsg("Validation Error: ID already exists.", "#d63031");
+            return;
+        }
+
+        const newStudent = { id, name, course, marks: parseInt(marks) };
+        students.push(newStudent);
+        
+        clearForm();
+        renderTable();
+        showMsg("Student added successfully!", "#00b894");
+    }
+
+    // UPDATE: Modify object
+    function updateStudent(id) {
+        const newCourse = document.getElementById(`edit-course-${id}`).value;
+        const newMarks = document.getElementById(`edit-marks-${id}`).value;
+
+        const index = students.findIndex(s => s.id === id);
+        if (index !== -1) {
+            students[index].course = newCourse;
+            students[index].marks = parseInt(newMarks);
+            showMsg("Record updated locally!", "#0984e3");
+            renderTable();
+        }
+    }
+
+    // DELETE: Remove object
+    function deleteStudent(id) {
+        students = students.filter(s => s.id !== id);
+        renderTable();
+        showMsg("Record removed.", "#d63031");
+    }
+
+    function clearForm() {
+        ['stuId', 'stuName', 'stuCourse', 'stuMarks'].forEach(id => document.getElementById(id).value = '');
+    }
+
+    function showMsg(text, color) {
+        const el = document.getElementById('msg');
+        el.textContent = text;
+        el.style.color = color;
+        setTimeout(() => el.textContent = '', 3000);
+    }
+
+    // Load on startup
+    fetchStudents();
+</script>
+
+</body>
+</html>
