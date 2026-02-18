@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Username Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        #usernameFeedback {
+            margin-top: 8px;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: none;
+        }
+        .loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .available {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .taken {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        button:hover:not(:disabled) {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Registration Form</h2>
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="username">Username (min 3 chars)</label>
+                <input type="text" id="username" required minlength="3">
+                <div id="usernameFeedback"></div>
+            </div>
+            
+            <button type="submit" id="submitBtn" disabled>Register</button>
+        </form>
+    </div>
+
+    <script>
+        // Simulated backend data
+        const serverData = {
+            usernames: ["admin", "user1", "john_doe", "testuser", "guest"]
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const usernameInput = document.getElementById('username');
+            const usernameFeedback = document.getElementById('usernameFeedback');
+            const submitBtn = document.getElementById('submitBtn');
+            const form = document.getElementById('registrationForm');
+
+            let usernameTimeout;
+
+            usernameInput.addEventListener('input', function() {
+                clearTimeout(usernameTimeout);
+                const username = this.value.trim();
+                usernameFeedback.style.display = 'none';
+                submitBtn.disabled = true;
+
+                if (username.length < 3) return;
+
+                usernameTimeout = setTimeout(() => checkUsername(username), 400);
+            });
+
+            async function checkUsername(username) {
+                showLoading(usernameFeedback);
+                
+                // Simulate network delay
+                await new Promise(resolve => setTimeout(resolve, 600));
+
+                const isTaken = serverData.usernames.some(u => 
+                    u.toLowerCase() === username.toLowerCase()
+                );
+
+                if (isTaken) {
+                    showFeedback(usernameFeedback, 'Username already taken', 'taken');
+                } else {
+                    showFeedback(usernameFeedback, 'Username available', 'available');
+                    submitBtn.disabled = false;
+                }
+            }
+
+            function showLoading(feedbackEl) {
+                feedbackEl.innerHTML = '<span class="spinner"></span>Checking...';
+                feedbackEl.className = 'loading';
+                feedbackEl.style.display = 'block';
+            }
+
+            function showFeedback(feedbackEl, message, type) {
+                feedbackEl.textContent = message;
+                feedbackEl.className = type;
+                feedbackEl.style.display = 'block';
+            }
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (submitBtn.disabled) {
+                    alert('Please choose an available username');
+                    return;
+                }
+                alert('Registration successful!');
+                form.reset();
+                usernameFeedback.style.display = 'none';
+                submitBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>
