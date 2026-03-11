@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Smart Book Explorer</title>
+
+<style>
+
+body{
+font-family:Verdana;
+background:#e6f2ff;
+margin:0;
+padding:0;
+}
+
+.header{
+background:#003366;
+color:white;
+padding:15px;
+text-align:center;
+}
+
+.container{
+width:750px;
+margin:30px auto;
+background:white;
+padding:20px;
+border-radius:8px;
+box-shadow:0 0 10px gray;
+}
+
+.controls{
+margin-bottom:15px;
+}
+
+input{
+padding:8px;
+width:200px;
+}
+
+button{
+padding:8px 12px;
+margin:3px;
+background:#004d99;
+color:white;
+border:none;
+border-radius:4px;
+cursor:pointer;
+}
+
+button:hover{
+background:#0073e6;
+}
+
+.book{
+border-left:5px solid #004d99;
+padding:10px;
+margin-top:10px;
+background:#f5f9ff;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+<h2>Smart Online Book Finder</h2>
+</div>
+
+<div class="container">
+
+<div class="controls">
+
+<input id="title" placeholder="Enter book title">
+
+<button onclick="searchBook()">Search</button>
+<button onclick="filterCategory()">Programming</button>
+<button onclick="sortPrice()">Sort Price</button>
+<button onclick="sortRating()">Sort Rating</button>
+<button onclick="topBooks()">Top Rated</button>
+
+</div>
+
+<div id="books"></div>
+
+<br>
+
+<button onclick="loadMore()">Load More Books</button>
+
+</div>
+
+<script>
+
+let page=1;
+
+function displayBooks(data){
+
+let output="";
+
+data.forEach(book=>{
+
+output+=`
+<div class="book">
+<h3>${book.title}</h3>
+<p><b>Author:</b> ${book.author}</p>
+<p><b>Category:</b> ${book.category}</p>
+<p><b>Price:</b> ₹${book.price}</p>
+<p><b>Rating:</b> ${book.rating}</p>
+</div>
+`;
+
+});
+
+document.getElementById("books").innerHTML=output;
+
+}
+
+
+function searchBook(){
+
+let title=document.getElementById("title").value;
+
+fetch("/books/search?title="+title)
+.then(res=>res.json())
+.then(data=>displayBooks(data));
+
+}
+
+
+function filterCategory(){
+
+fetch("/books/category/Programming")
+.then(res=>res.json())
+.then(data=>displayBooks(data));
+
+}
+
+
+function sortPrice(){
+
+fetch("/books/sort/price")
+.then(res=>res.json())
+.then(data=>displayBooks(data));
+
+}
+
+
+function sortRating(){
+
+fetch("/books/sort/rating")
+.then(res=>res.json())
+.then(data=>displayBooks(data));
+
+}
+
+
+function topBooks(){
+
+fetch("/books/top")
+.then(res=>res.json())
+.then(data=>displayBooks(data));
+
+}
+
+
+function loadMore(){
+
+fetch("/books?page="+page)
+.then(res=>res.json())
+.then(data=>{
+displayBooks(data)
+page++
+})
+
+}
+
+</script>
+
+</body>
+</html>

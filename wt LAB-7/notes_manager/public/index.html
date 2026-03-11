@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Student Notes Manager</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:linear-gradient(120deg,#74ebd5,#acb6e5);
+margin:0;
+padding:0;
+}
+
+.container{
+width:700px;
+margin:40px auto;
+background:white;
+padding:25px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+h1{
+text-align:center;
+}
+
+input, textarea{
+width:100%;
+padding:10px;
+margin-top:8px;
+margin-bottom:10px;
+border:1px solid #ccc;
+border-radius:5px;
+}
+
+button{
+padding:8px 15px;
+border:none;
+border-radius:5px;
+cursor:pointer;
+margin-right:5px;
+}
+
+.addBtn{
+background:#28a745;
+color:white;
+}
+
+.deleteBtn{
+background:#dc3545;
+color:white;
+}
+
+.editBtn{
+background:#007bff;
+color:white;
+}
+
+.note{
+border:1px solid #ddd;
+padding:10px;
+margin-top:10px;
+border-radius:5px;
+background:#f9f9f9;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Student Notes Manager</h1>
+
+<h3>Add Note</h3>
+
+<input id="title" placeholder="Enter Title">
+<input id="subject" placeholder="Enter Subject">
+<textarea id="description" placeholder="Enter Description"></textarea>
+
+<button class="addBtn" onclick="addNote()">Add Note</button>
+
+<h3>All Notes</h3>
+
+<div id="notes"></div>
+
+</div>
+
+<script>
+
+function addNote(){
+
+fetch("/notes",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+title:document.getElementById("title").value,
+subject:document.getElementById("subject").value,
+description:document.getElementById("description").value
+
+})
+
+})
+
+.then(res=>res.json())
+.then(()=>{
+
+document.getElementById("title").value=""
+document.getElementById("subject").value=""
+document.getElementById("description").value=""
+
+loadNotes()
+
+})
+
+}
+
+function loadNotes(){
+
+fetch("/notes")
+
+.then(res=>res.json())
+
+.then(data=>{
+
+let output=""
+
+data.forEach(note=>{
+
+output+=`
+<div class="note">
+
+<h3>${note.title}</h3>
+<p><b>Subject:</b> ${note.subject}</p>
+<p>${note.description}</p>
+
+<button class="editBtn" onclick="editNote('${note._id}','${note.title}','${note.description}')">Edit</button>
+<button class="deleteBtn" onclick="deleteNote('${note._id}')">Delete</button>
+
+</div>
+`
+
+})
+
+document.getElementById("notes").innerHTML=output
+
+})
+
+}
+
+function deleteNote(id){
+
+fetch("/notes/"+id,{
+method:"DELETE"
+})
+.then(()=>loadNotes())
+
+}
+
+function editNote(id,title,description){
+
+let newTitle=prompt("Edit Title",title)
+let newDesc=prompt("Edit Description",description)
+
+fetch("/notes/"+id,{
+
+method:"PUT",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+title:newTitle,
+description:newDesc
+})
+
+})
+.then(()=>loadNotes())
+
+}
+
+loadNotes()
+
+</script>
+
+</body>
+</html>
