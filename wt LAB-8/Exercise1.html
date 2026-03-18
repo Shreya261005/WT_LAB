@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Marks Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    .form-group {
+      margin: 10px 0;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input {
+      width: 150px;
+      padding: 6px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background-color: #007cba;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005a87;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f0f8ff;
+      border-left: 4px solid #007cba;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <h2>Student Marks Calculator (ES6)</h2>
+  <p>Enter marks for 3 subjects and see total and average.</p>
+
+  <div class="form-group">
+    <label>Student Name:</label>
+    <input type="text" id="studentName" placeholder="e.g., Arun" />
+  </div>
+  <div class="form-group">
+    <label>Mark 1:</label>
+    <input type="number" id="mark1" placeholder="0–100" />
+  </div>
+  <div class="form-group">
+    <label>Mark 2:</label>
+    <input type="number" id="mark2" placeholder="0–100" />
+  </div>
+  <div class="form-group">
+    <label>Mark 3:</label>
+    <input type="number" id="mark3" placeholder="0–100" />
+  </div>
+
+  <button onclick="calculate()">Calculate</button>
+
+  <div id="output"></div>
+
+  <script>
+    // ES6 arrow function to compute average
+    const calculateAverage = (m1, m2, m3) => {
+      return (m1 + m2 + m3) / 3;
+    };
+
+    function calculate() {
+      // ES6 variables
+      let studentName = document.getElementById("studentName").value || "Unknown";
+      let mark1 = parseFloat(document.getElementById("mark1").value) || 0;
+      let mark2 = parseFloat(document.getElementById("mark2").value) || 0;
+      let mark3 = parseFloat(document.getElementById("mark3").value) || 0;
+
+      let totalMarks = mark1 + mark2 + mark3;
+      let average = calculateAverage(mark1, mark2, mark3);
+      average = average.toFixed(2);
+
+      // ES6 template literal for formatted message
+      const message = `
+Student Name: ${studentName}
+Total Marks: ${totalMarks}
+Average Marks: ${average}
+      `;
+
+      document.getElementById("output").innerHTML = `
+        <pre class="result">${message.trim()}</pre>
+      `;
+    }
+  </script>
+</body>
+</html>

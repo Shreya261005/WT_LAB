@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Course Enrollment - Exercise 3</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    .form-group { margin: 15px 0; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    input, select { width: 250px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+    button { padding: 10px 20px; background: #007cba; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    .result { margin-top: 20px; padding: 15px; background: #f0f8ff; border-left: 4px solid #007cba; font-family: monospace; display: none; }
+    .success { color: #28a745; }
+  </style>
+</head>
+<body>
+  <h2>Exercise 3: ES6 Classes & Promises</h2>
+
+  <div class="form-group">
+    <label>Course Name:</label>
+    <input type="text" id="courseName" placeholder="Web Technologies" />
+  </div>
+  <div class="form-group">
+    <label>Instructor:</label>
+    <input type="text" id="instructor" placeholder="Dr. Kumar" />
+  </div>
+  <div class="form-group">
+    <label>Seats Available:</label>
+    <select id="seatsAvailable">
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+    </select>
+  </div>
+
+  <button onclick="enrollCourse()">Enroll Course</button>
+
+  <div id="output" class="result"></div>
+
+  <script>
+    // Make functions globally accessible by attaching to window
+    window.enrollCourse = function() {
+      const courseName = document.getElementById("courseName").value.trim();
+      const instructor = document.getElementById("instructor").value.trim();
+      
+      if (!courseName || !instructor) {
+        document.getElementById("output").style.display = 'none';
+        return;
+      }
+
+      const seatsAvailable = document.getElementById("seatsAvailable").value === "yes";
+
+      // ES6 Class
+      class Course {
+        constructor(courseName, instructor) {
+          this.courseName = courseName;
+          this.instructor = instructor;
+        }
+        displayCourse() {
+          console.log(`Course: ${this.courseName}, Instructor: ${this.instructor}`);
+        }
+      }
+
+      let course1 = new Course(courseName, instructor);
+      course1.displayCourse();
+
+      // ES6 Promise
+      let enrollPromise = new Promise((resolve, reject) => {
+        if(seatsAvailable)
+          resolve("Enrollment Successful");
+        else
+          reject("Course Full");
+      });
+
+      enrollPromise
+        .then(msg => {
+          console.log(msg);
+          showResult(course1, msg, true);
+        })
+        .catch(err => {
+          console.log(err);
+          showResult(course1, err, false);
+        });
+    }
+
+    function showResult(course, message, isSuccess) {
+      document.getElementById("output").style.display = 'block';
+      document.getElementById("output").innerHTML = `
+        <h3>Course Details:</h3>
+        <pre>Course: ${course.courseName}, Instructor: ${course.instructor}</pre>
+        <h3>Enrollment:</h3>
+        <pre class="${isSuccess ? 'success' : ''}">${message}</pre>
+        </pre>
+      `;
+    }
+  </script>
+</body>
+</html>
