@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercise 1 - Form Validation</title>
+
+    <!-- React CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-family: Arial;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 350px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background: #4a6cf7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .error {
+            color: red;
+            font-size: 13px;
+        }
+
+        .success {
+            color: green;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+
+const FormApp = () => {
+    // State variables
+    const [name, setName] = React.useState("");
+    const [email, setEmail] = React.useState("");
+    const [password, setPassword] = React.useState("");
+
+    const [errors, setErrors] = React.useState({});
+    const [success, setSuccess] = React.useState("");
+
+    // Validation function
+    const validate = () => {
+        let newErrors = {};
+
+        if (!name) {
+            newErrors.name = "Name is required";
+        }
+
+        if (!email) {
+            newErrors.email = "Email is required";
+        } else if (!email.includes("@")) {
+            newErrors.email = "Invalid email format";
+        }
+
+        if (!password) {
+            newErrors.password = "Password is required";
+        } else if (password.length < 6) {
+            newErrors.password = "Password must be at least 6 characters";
+        }
+
+        return newErrors;
+    };
+
+    // Submit handler
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const validationErrors = validate();
+
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            setSuccess("");
+        } else {
+            setErrors({});
+            setSuccess("Form submitted successfully!");
+
+            // Reset form
+            setName("");
+            setEmail("");
+            setPassword("");
+        }
+    };
+
+    return (
+        <div className="form-card">
+            <h2>User Form</h2>
+
+            <form onSubmit={handleSubmit}>
+
+                <input
+                    type="text"
+                    placeholder="Enter Name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                />
+                {errors.name && <div className="error">{errors.name}</div>}
+
+                <input
+                    type="email"
+                    placeholder="Enter Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+                {errors.email && <div className="error">{errors.email}</div>}
+
+                <input
+                    type="password"
+                    placeholder="Enter Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+                {errors.password && <div className="error">{errors.password}</div>}
+
+                <button type="submit">Submit</button>
+
+            </form>
+
+            {success && <p className="success">{success}</p>}
+        </div>
+    );
+};
+
+// Render
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<FormApp />);
+
+</script>
+</body>
+</html>

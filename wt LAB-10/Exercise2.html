@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercise 2 - Dynamic List</title>
+
+    <!-- React CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-family: Arial;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 350px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        input {
+            width: 70%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px;
+            margin-left: 5px;
+            background: #4a6cf7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            background: #f1f1f1;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .empty {
+            text-align: center;
+            color: gray;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+
+const ListApp = () => {
+    // State (array of items)
+    const [items, setItems] = React.useState([]);
+    const [input, setInput] = React.useState("");
+
+    // Add item
+    const addItem = () => {
+        if (input.trim() === "") return;
+
+        const newItem = {
+            id: Date.now(),   // unique key
+            text: input
+        };
+
+        setItems([...items, newItem]);
+        setInput("");
+    };
+
+    // Remove item
+    const removeItem = (id) => {
+        const updatedList = items.filter(item => item.id !== id);
+        setItems(updatedList);
+    };
+
+    return (
+        <div className="card">
+            <h2>Dynamic List</h2>
+
+            {/* Input Section */}
+            <div>
+                <input
+                    type="text"
+                    placeholder="Enter item"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                />
+                <button onClick={addItem}>Add</button>
+            </div>
+
+            {/* List Display */}
+            {items.length === 0 ? (
+                <p className="empty">No items in the list</p>
+            ) : (
+                <ul>
+                    {items.map(item => (
+                        <li key={item.id}>
+                            {item.text}
+                            <button onClick={() => removeItem(item.id)}>❌</button>
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+};
+
+// Render
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<ListApp />);
+
+</script>
+</body>
+</html>
