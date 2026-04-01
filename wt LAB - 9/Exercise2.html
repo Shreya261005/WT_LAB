@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercise 2 - Student Cards</title>
+
+    <!-- React CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-family: Arial;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .cards {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            width: 220px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .avatar {
+            font-size: 50px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+
+// Reusable Component
+const StudentCard = (props) => {
+    return (
+        <div className="card">
+            <div className="avatar">👩‍🎓</div>
+            <h3>{props.name}</h3>
+            <p><b>Dept:</b> {props.department}</p>
+            <p><b>Marks:</b> {props.marks}</p>
+        </div>
+    );
+};
+
+// Parent Component
+const App = () => {
+    return (
+        <div className="container">
+            <h1 style={{color:"white"}}>Student Cards</h1>
+
+            <div className="cards">
+                <StudentCard name="Shreya" department="CSE" marks="92" />
+                <StudentCard name="Rahul" department="ECE" marks="85" />
+                <StudentCard name="Ananya" department="AIML" marks="95" />
+            </div>
+        </div>
+    );
+};
+
+// Render
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+
+</script>
+</body>
+</html>

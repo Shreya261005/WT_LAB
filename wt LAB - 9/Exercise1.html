@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise 1 - Student Profile</title>
+    
+    <!-- React CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .profile-card {
+            width: 420px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .profile-header {
+            background: #4a6bdf;
+            color: white;
+            padding: 40px 20px 30px;
+            text-align: center;
+        }
+
+        .avatar {
+            font-size: 85px;
+            margin-bottom: 15px;
+        }
+
+        .profile-header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .profile-body {
+            padding: 35px 30px 25px;
+        }
+
+        .student-name {
+            text-align: center;
+            color: #222;
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        .details {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 10px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e5e5;
+            align-items: center;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            font-weight: 600;
+            color: #555;
+            font-size: 16px;
+        }
+
+        .value {
+            font-weight: 500;
+            color: #222;
+            font-size: 16px;
+        }
+
+        .profile-footer {
+            background: #f1f1f1;
+            padding: 18px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const StudentProfile = () => {
+            // Student details stored in variables (as per Exercise 1 requirement)
+            const studentName = "Venkata Sai Shreya Maturi";
+            const department = "Computer Science and Engineering";
+            const year = "3rd Year";
+            const section = "A";
+            const rollNumber = "21B01A05XX";
+            const college = "JNTU College of Engineering";
+
+            return React.createElement('div', { className: 'profile-card' },
+                // Header
+                React.createElement('div', { className: 'profile-header' },
+                    React.createElement('div', { className: 'avatar' }, '👩‍🎓'),
+                    React.createElement('h1', null, 'Student Profile')
+                ),
+                // Body
+                React.createElement('div', { className: 'profile-body' },
+                    React.createElement('h2', { className: 'student-name' }, studentName),
+                    React.createElement('div', { className: 'details' },
+                        React.createElement('div', { className: 'detail-row' },
+                            React.createElement('span', { className: 'label' }, 'Department :'),
+                            React.createElement('span', { className: 'value' }, department)
+                        ),
+                        React.createElement('div', { className: 'detail-row' },
+                            React.createElement('span', { className: 'label' }, 'Year :'),
+                            React.createElement('span', { className: 'value' }, year)
+                        ),
+                        React.createElement('div', { className: 'detail-row' },
+                            React.createElement('span', { className: 'label' }, 'Section :'),
+                            React.createElement('span', { className: 'value' }, section)
+                        ),
+                        React.createElement('div', { className: 'detail-row' },
+                            React.createElement('span', { className: 'label' }, 'Roll Number :'),
+                            React.createElement('span', { className: 'value' }, rollNumber)
+                        ),
+                        React.createElement('div', { className: 'detail-row' },
+                            React.createElement('span', { className: 'label' }, 'College :'),
+                            React.createElement('span', { className: 'value' }, college)
+                        )
+                    )
+                ),
+                // Footer
+                React.createElement('div', { className: 'profile-footer' },
+                    React.createElement('p', null, 'Exercise 1 • Built with React (Single HTML File)')
+                )
+            );
+        };
+
+        // Render the component
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(StudentProfile));
+    </script>
+</body>
+</html>
